@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>ESTADISTICA PARA PSICOLOGIA</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Carlos Puma" />
+    <script src="estadisticaenr_files/header-attrs/header-attrs.js"></script>
+    <link href="estadisticaenr_files/panelset/panelset.css" rel="stylesheet" />
+    <script src="estadisticaenr_files/panelset/panelset.js"></script>
+    <link href="estadisticaenr_files/xaringanExtra-extra-styles/xaringanExtra-extra-styles.css" rel="stylesheet" />
+    <script src="estadisticaenr_files/clipboard/clipboard.min.js"></script>
+    <link href="estadisticaenr_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="estadisticaenr_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Haga clic para copiar","success":"Copiado","error":"Pulse Ctrl + C para copiar"})</script>
+    <link href="estadisticaenr_files/tabwid/tabwid.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+
+
+
+
+
+
+class: title-slide, left, middle
+background-image: url("https://pbs.twimg.com/media/FoeqoqvakAASJ30?format=jpg&amp;name=4096x4096")
+background-position: right
+background-size: contain
+background-color: #BB3E03
+
+.pull-left[
+
+# ESTADISTICA PARA PSICOLOGIA
+
+## Una guia
+
+### 
+]
+---
+
+name: contents-slide
+## Indice de Contenidos
+        
+1. [Instalar y llamar a los paquetes para trabajar](#Instalar)
+2. [Correlaciones en Rstudio](#correlaciones)
+3. [Comparación de grupos independientes](#Comparación)
+4. [Pruebas Parametricas 2 grupos (T student)](#student)
+5. [T de Student](#pruebat)
+6. [Gráfica de la prueba T de Student](#graficat)
+7. [U de Mann-Whitney](#Whitney)
+8. [Gráfica de la prueba U Mann-Whitney](#graficaWhitney)
+9. [Pruebas Parametricas para más de dos grupos (ANOVA)](#ANOVA)
+10. [Gráfica de la prueba ANOVA](#graficaanova)
+11. [Kruskal-Wallis (Prueba no paramétrica)](#Kruskal)
+12. [Gráfica de la prueba Kruskal-Wallis](#graficaKruskal)
+13. [Prueba Parametrica para grupos relacionados](#relacionados)
+14. [T de Student para muestras relacionadas/pareadas/apareadas](#trelacionadas)
+15. [Gráfica de la prueba t para muestras apareadas](#graficatapareadas)
+
+---
+
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #9B2226
+name: Instalar
+
+## Instalar y llamar a los paquetes para trabajar
+&lt;hr&gt;
+---
+
+## Llamar a los paquetes
+
+En este caso tenemos que usar el siguiente código para poder proceder con los análisis sin ningún problema. Este código nos instala y llama a todos los paquetes necesarios. Solo damos **Control + Enter** al comienzo de las 3 lineas **Ipak** + **packages** y **ipak(packages)**
+
+
+````markdown
+ipak &lt;- function(pkg){
+  new.pkg &lt;- pkg[!(pkg %in% installed.packages()[, "Package"])]
+  if (length(new.pkg)) 
+    install.packages(new.pkg, dependencies = TRUE)
+  sapply(pkg, require, character.only = TRUE)
+}
+
+packages &lt;- c("parameters","apa","haven","ggplot2","ggpubr","gridExtra","apaTables",                  "reshape", "GPArotation", "mvtnorm", "psych","psychometric", "lavaan",                  "nFactors", "semPlot","MVN","semTools","foreign","readxl", "dplyr",                     "parameters","apa","haven","ggplot2","ggpubr","gridExtra","reshape"
+              "GPArotation", "mvtnorm", "psych", "psychometric","lavaan",
+              "semPlot","corrr","correlation","corrplot","ggcorrplot","nortest","car",
+              "rempsyc","magrittr","flextable","officer","knitr","data.table","report",
+              "parameters")
+              
+ipak(packages)
+library(tidyverse) # En el caso de este paquete solo se da Control + Enter 
+library(dplyr) # En el caso de este paquete solo se da Control + Enter 
+```
+---
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #8F250C
+name: yo
+
+# Regresar a [Indice de Contenidos](#contents-slide)
+---
+
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #005F73
+name: correlaciones
+
+## Correlaciones en Rstudio
+&lt;hr&gt;
+
+---
+
+#### Vamos a llamar primero a nuestra base de datos para poder iniciar con las correlaciones
+
+````markdown
+file.choose()
+```
+**file.choose()** Nos permitirá ver donde estará ubicado nuestra base de datos que puede ser un archivo SPSS o xlsx, el cual debemos ubicar en nuestra computadora. Luego nos aparecerá de la siguiente forma 
+
+````markdown
+"D:\\INVESTIGACIÓN\\Comunicación y empatia\\Analisis\\comuyempa para jamovi.sav"
+```
+Esta base de datos es de un archivo de SPSS, para poder cargarlo a nuestro Rstudio debemos colocar la siguiente linea
+
+````markdown
+datos&lt;-read_xlsx("D:\\INVESTIGACIÓN\\Comunicación y empatia\\nueva articulo\\paraelarti.xlsx")
+datos&lt;-read_sav("D:\\INVESTIGACIÓN\\Comunicación y empatia\\Analisis\\comuyempa para jamovi.sav")
+```
+En este caso se pone el ejemplo de dos archivo como seria de Excel y SPSS respectivamente
+
+1. Los importante es colocar **datos&lt;-**, pues es un identificador que tendremos, en este caso se coloco ***datos*** como el normbre que tendra el archivo en nuestro entorno (pero puede ser cualquiera que querramos) y luego colocar **&lt;-** pues esto es el medio para guardar el archivo
+2. Luego escribir **read_xlsx** o **read_sav**, pero tambien solo copiar y pegar la linea de código presente
+3. Con respecto a la ubicación de nuestro archivo siempre debe estar entre comillas
+
+---
+
+#### Ya con los datos en nuestro entorno de Rstudio, podemos visualizarlos los siguientes códigos
+
+````markdown
+view(datos) # Estos nos llevará a otra ventana donde se encontrarán nuestros datos
+names(datos) # Nos permitirá ver los nombres de nuestras variables
+```
+
+
+Teniendo esto, podemos proceder a realizar nuestra correlación, pero hay que considerar un punto
+
+1.1 Si nuestra nuestra base de datos tiene información sociodemográfica, nuestras dimensiones y/o totales y queremos solo correlacionar nuestras dimensiones debemos colocar el siguiente código
+
+````markdown
+datoscorre &lt;- dplyr::select(datos, genemotiva:expreemocional)
+```
+En donde como se mencionó se llamarán en conjunto a nuestras dimensiones, colocando para esto
+
+- Colocando el nombre nuevo que le daremos a esa base de datos, en este caso **datoscorre &lt;-** 
+- Luego el paquete **dplyr::select** con su respectiva función que queremos utilizar, que seria en este caso **select** 
+- Y finalmente entre los paréntesis **(datos, genemotiva:expreemocional)**, la base de datos de donde estamos seleccionando nuestras dimensiones y las dimensiones (en este caso se hace la selección de las variables que están dentro de las dimensiones ***genemotiva:expreemocional***), esto utilizando los dos puntos **":"**
+
+1.2 Y si nuestra base de datos solo contiene lo que querremos correlacionar, no hacemos el procedimiento mencionado anteriormente de hacer una selección de estas 
+
+---
+
+#### Para iniciar con las correlaciones, solo colocaremos el siguiente código.
+
+
+```r
+cor(datoscorre)
+```
+
+```
+               genemotiva comunoverbal empatiahabi expreemocional
+genemotiva      1.0000000    0.6566553   0.7141288      0.6382477
+comunoverbal    0.6566553    1.0000000   0.5388807      0.5828707
+empatiahabi     0.7141288    0.5388807   1.0000000      0.5421056
+expreemocional  0.6382477    0.5828707   0.5421056      1.0000000
+```
+Como se puede observar los resultados de las correlaciones se muestran automáticamente luego de darle **Control + Enter**
+
+Pero para poder obtener ya una tabla APA con todas las especificaciones podemos usar el siguiente código, el cual nos creará un documento word con esta tabla 
+
+
+```r
+apa.cor.table(datoscorre, # Aqui colocamos nuestra base de datos
+              table.number = 1, # Agregar el número de tabla que queramos que sea
+              show.conf.interval = FALSE, # Si quieremos que en la tabla tenga los intervalos de confianza
+              landscape = TRUE,
+              #filename = "worddecorrelaciones.doc" # Y para este caso si lo queremos guardar en un documento word
+              )
+```
+
+---
+
+class: center
+
+Este seria el resultado obtenido
+
+
+```
+
+
+Table 1 
+
+Means, standard deviations, and correlations with confidence intervals
+ 
+
+  Variable          M     SD   1          2          3         
+  1. genemotiva     21.94 3.53                                 
+                                                               
+  2. comunoverbal   18.37 3.18 .66**                           
+                               [.61, .70]                      
+                                                               
+  3. empatiahabi    16.06 2.37 .71**      .54**                
+                               [.67, .75] [.48, .59]           
+                                                               
+  4. expreemocional 10.57 2.00 .64**      .58**      .54**     
+                               [.59, .68] [.53, .63] [.48, .60]
+                                                               
+
+Note. M and SD are used to represent mean and standard deviation, respectively.
+Values in square brackets indicate the 95% confidence interval.
+The confidence interval is a plausible range of population correlations 
+that could have caused the sample correlation (Cumming, 2014).
+ * indicates p &lt; .05. ** indicates p &lt; .01.
+ 
+```
+---
+
+### Si en el caso nuestros datos no tengan una normalidad, podemos utilizar la correlación de spearman, la cual es una prueba no paramétrica
+
+Y para poder obtener estas correlaciones, vamos utilizar el siguiente código
+
+````markdown
+cor(datoscorre, method = c("spearman") )
+```
+
+```
+               genemotiva comunoverbal empatiahabi expreemocional
+genemotiva      1.0000000    0.6218225   0.6786040      0.6289897
+comunoverbal    0.6218225    1.0000000   0.5084228      0.5342866
+empatiahabi     0.6786040    0.5084228   1.0000000      0.5087295
+expreemocional  0.6289897    0.5342866   0.5087295      1.0000000
+```
+
+Como se puede ver, se colocó la misma base donde se encuentran nuestas dimensiones o variables **datoscorre**, pero se le esta agregando el **method** y en este se especifica de esa forma que se quiere la correlación de spearman. Teniendo como resultados estas correlaciones.
+
+**Nota: Con respecto a esta especificación que se hizo con el **method**, se hace porque las correlaciones que se hacen con el programa R siempre son de pearson, por ese motivo se agrega el **method**, pues si no se hace solo tendriamos correlaciones pearson **
+
+---
+### Podemos graficar nuestras correlaciones de las siguientes maneras
+
+.pull-left[
+
+#### **Base**
+
+````markdown
+datoscorre %&gt;% 
+  correlate() %&gt;% 
+  network_plot()
+```
+
+&lt;img src="figs/unnamed-chunk-8-1.png" width="100%" /&gt;
+
+&lt;br&gt;
+
+
+]
+
+
+.pull-right[
+
+
+#### **Base**
+
+
+
+````markdown
+datoscorree &lt;- cor(datoscorree, 
+                   method = "pearson")
+corrplot(datoscorree, 
+         method = "shade",
+         tl.col = "black",
+         shade.col = NA,
+         tl.srt = 45,
+         addCoef.col = "black")
+```
+
+&lt;img src="figs/unnamed-chunk-10-1.png" width="100%" /&gt;
+
+]
+
+---
+
+## **Base**
+
+.pull-left[
+
+
+&lt;br&gt;&lt;br&gt;
+
+````markdown
+ggcorrplot(datoscorree, # Colocamos nuestros datos
+           lab = TRUE, # Si queremos que los números de las correlaciones aparezcan
+           hc.order = TRUE,
+           lab_size = 3, # El tamaño de los números en las correlaciones
+           type = c("upper") # El estilo de presentación de la gráfica
+           ) 
+```
+
+&lt;br&gt;
+
+
+]
+
+
+.pull-right[
+
+
+&lt;br&gt;&lt;br&gt;
+
+&lt;img src="figs/unnamed-chunk-11-1.png" width="100%" /&gt;
+
+]
+
+---
+
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #8F250C
+name: yo
+
+# Regresar a [Indice de Contenidos](#contents-slide)
+
+---
+
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #BB3E03
+name: Comparación
+
+## Comparación de grupos independientes
+&lt;hr&gt;
+---
+
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #540B0E
+name: student
+
+## Pruebas Parametricas 2 grupos (T student)
+&lt;hr&gt;
+
+---
+
+#### Para iniciar con el analisis, primero debemos obtener dos cosas:
+
+1. La normalidad de los datos (Kolmogorov y Shapiro)
+2. La igualdad de varianzas (Prueba de Levene)
+
+Y para obtener estos resultados debemos tener en cuenta la interpretación de estos dos pues, estos se leen de la misma manera
+
+- Refiriéndonos al análisis del p valor 0.05, siendo el ejemplo de esto
+
+````markdown
+shapiro.test(datos$genemotiva) 
+```
+
+
+```
+
+	Shapiro-Wilk normality test
+
+data:  datos$genemotiva
+W = 0.9725, p-value = 3.435e-09
+```
+En este caso el resultado del **p-value** es menor a 0.05 ya que salio mucho menos **p-value = 3.435e-09** por lo que se puede interpretar que la variable ***genemotiva*** no tiene normalidad.
+
+---
+
+Caso contrario es cuando obtenernos un valor p mayor a 0.05, pues esto nos indicaría que los datos son normales. Como en el siguiente caso, en el cual la variable **Ansiedad** sus resultados muestran que es normal, debido a que su **p-value = 0.0537** es mayor a 0.05
+
+
+
+
+
+````markdown
+shapiro.test(datosnoparame$Ansiedad) 
+```
+
+
+```
+
+	Shapiro-Wilk normality test
+
+data:  datosnoparame$Ansiedad
+W = 0.97786, p-value = 0.0537
+```
+
+En el caso anterior hemos observado el uso del **Shapiro**, pero este solo se utiliza cuando la cantidad de nuestros datos son menores a 50, en el caso de que tengamos más de 50 datos o encuestados, debemos usar **Kolmogorov**
+
+````markdown
+lillie.test(datos$empatiaafectiva)
+```
+
+
+```
+
+	Lilliefors (Kolmogorov-Smirnov) normality test
+
+data:  datos$empatiaafectiva
+D = 0.091096, p-value = 6.737e-13
+```
+Aqui según el **p-value = 8.337e-13** se puede observar que es menor a 0.05 por lo que se puede interpretar que la variable **empatiaafectiva** no tiene una normalidad.
+
+
+---
+
+Teniendo en cuenta la normalidad de los datos, ahora vamos a pasar a la **Prueba de Levene** que verificará la igualdad de varianzas
+
+Para tener los resultados de la prueba de levene debemos colocar el siguiente código
+
+````markdown
+leveneTest(datosnopara$AreaIV, # Primero definimos nuestra variable o dimensión a la que querremos analizar
+           group = datosnopara$Sexo, # Aqui definimos nuestros grupo, en este caso seria por sexo
+           data = datosnopara # Y por último de que base de datos de donde estamos sacado la variable y el grupo 
+           )
+
+En este caso debemos utilizar el simbolo "$" para poder espeficiar mejor las variable, solo es escribir asi "basededatos$variable"
+```
+
+
+```
+Levene's Test for Homogeneity of Variance (center = median: datosnopara)
+       Df F value Pr(&gt;F)
+group   1   0.757 0.3846
+      721               
+```
+Como se puede ver los resultados muestran que nuestro p-value es **0.3846** siendo esto mayor a 0.05, siendo la interpretación: La variable AreaIV muestra que tiene igualdad de varianzas, pues el valor p es mayor a 0.05.
+
+Si el resultado del valor p es menor a 0.05 se diría que no existen iguadad de varianzas
+
+*Teniendo ya estos dos resultados, refiriendonos a la Normalidad y a la Iguadad de varianzas, podemos iniciar con las pruebas parametricas y si es el caso no parámetricas, según lo obtenido*
+
+---
+
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #8F250C
+name: yo
+
+# Regresar a [Indice de Contenidos](#contents-slide)
+
+---
+
+name: pruebat
+
+## T de Student
+
+Esta es una prueba paramétrica y compara solo a dos grupos que pueden ser sexo (varón, mujer) o cualquier otra que solo tenga dos grupos
+
+Para poder realizar un t test debemos colocar el siguiente código
+
+````markdown
+t.test(datos$genemotiva~ datos$Sexo, data = datos)
+```
+
+
+```
+
+	Welch Two Sample t-test
+
+data:  datos$genemotiva by datos$Sexo
+t = -3.2095, df = 240.73, p-value = 0.001511
+alternative hypothesis: true difference in means between group 1 and group 2 is not equal to 0
+95 percent confidence interval:
+ -1.7354872 -0.4153598
+sample estimates:
+mean in group 1 mean in group 2 
+       21.12414        22.19956 
+```
+Como se puede observar los resultado muestran que si existen una diferencia estadisticamente significativa, pues el **p-value = 0.001511** salio menor a 0.05.
+
+---
+
+Caso contrario es si nuestro p-value es mayor a 0.05, ya que en ese caso podríamos decir no existen diferencias estadisticamente significativas
+
+En el caso de esta forma de realizar la t de student, solo se puede hacer con solo una variable y solo cambiar nuestras dimensiones, de modo que lo haríamos de esta forma (claro sin cambiar la variable de agrupación)
+
+````markdown
+t.test(datos$genemotiva~ datos$Sexo, data = datos)
+```
+
+````markdown
+t.test(datos$comunoverbal~ datos$Sexo, data = datos)
+```
+
+````markdown
+t.test(datos$empatiahabi~ datos$Sexo, data = datos)
+```
+
+Pero se puede obtener los t de students de más variables o dimensiones a la vez y solo utilizando el siguiente código
+
+````markdown
+nice_t_test(data = datosnopara, #Colocamos el nombre de nuestra base de datos
+            response = c("AreaI","AreaII","AreaIII","AreaIV"), # Aqui las dimensiones o variables de las que queremos obtener la t de student
+            group = "Sexo", # Aqui colocamos la variable de agrupación
+            warning = FALSE,
+            var.equal = TRUE # Se coloca TRUE para usar la prueba t de Student
+            )
+```
+---
+
+Los resultados que obtendríamos serian estos 
+
+
+```
+  Dependent Variable           t  df            p            d
+1              AreaI -3.35065608 721 0.0008482034 -0.249329677
+2             AreaII -1.15126276 721 0.2500057881 -0.085667990
+3            AreaIII -0.05955366 721 0.9525276269 -0.004431519
+4             AreaIV  0.43799593 721 0.6615204213  0.032592239
+    CI_lower    CI_upper
+1 -0.3956556 -0.10283222
+2 -0.2315505  0.06027392
+3 -0.1502754  0.14141540
+4 -0.1132740  0.17843587
+```
+
+1. Se pueden observar en esta tabla las variables dependientes, que en este caso son las 4 áreas
+2. la **t** de la prueba 
+3. los **df** (grados de libertad)
+4. los valores **p**
+5. los tamaños del efecto (que en este caso es la ***d de Cohen***)
+6. los intervalos de confianza (**CI_lower y CI_upper**)
+
+Estos resultados ya se encuentran listos para pasarlos a una tabla con solo copiar y pegar, debido a que es lo que se pide haciendo la interpretración que solo en el **AreaI** existen diferencias estadisticamente significativas, pues el valor p en esta variable es menor a 0.05.
+
+Sin embargo, podemos ya guardarlo en un word la tabla, utilizando para realizar esto el siguiente código
+
+---
+
+
+.pull-left[
+
+En este caso vamos a guardar los códigos, ya presentados, con el nombre **t.test.results** 
+
+````markdown
+nice_t_test(data = datosnopara,
+            response = c("AreaI","AreaII","AreaIII","AreaIV"),
+            group = "Sexo",
+            warning = FALSE,
+            var.equal = TRUE)
+```
+
+
+````markdown
+t.test.results&lt;- nice_t_test(data = datosnopara,
+            response = c("AreaI","AreaII","AreaIII","AreaIV"),
+            group = "Sexo",
+            warning = FALSE,
+            var.equal = TRUE)
+```
+
+
+
+&lt;br&gt;
+
+
+]
+
+
+.pull-right[
+
+
+Y luego con el siguiente código vamos a obtener una tabla apa
+
+````markdown
+nice_table(t.test.results,
+           title = "Comparación de grupos t de student",
+           note = "df = Grados de libertad, d = tamaño del efecto")
+```
+
+&lt;template id="02f8b90c-ded8-466b-a468-2de7e3e33456"&gt;&lt;style&gt;
+.tabwid table{
+  border-spacing:0px !important;
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  border-color: transparent;
+  caption-side: top;
+}
+.tabwid-caption-bottom table{
+  caption-side: bottom;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td, .tabwid th {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+.katex-display {
+    margin: 0 0 !important;
+}
+&lt;/style&gt;&lt;div class="tabwid"&gt;&lt;style&gt;.cl-ea0047b4{table-layout:auto;}.cl-e9e5f1e8{font-family:'Times New Roman';font-size:12pt;font-weight:normal;font-style:italic;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-e9e5f206{font-family:'Times New Roman';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-e9efe86a{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 2;background-color:transparent;}.cl-e9efe874{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 2;background-color:transparent;}.cl-e9efe87e{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-e9f01a60{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e9f01a6a{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0.5pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e9f01a74{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e9f01a7e{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e9f01a88{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}&lt;/style&gt;&lt;table data-quarto-disable-processing='true' class='cl-ea0047b4'&gt;&lt;thead&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;th  colspan="6"class="cl-e9f01a60"&gt;&lt;p class="cl-e9efe86a"&gt;&lt;span class="cl-e9e5f1e8"&gt;Comparación de grupos t de student&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;th class="cl-e9f01a6a"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;Dependent Variable&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-e9f01a6a"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f1e8"&gt;t&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-e9f01a6a"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f1e8"&gt;df&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-e9f01a6a"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f1e8"&gt;p&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-e9f01a6a"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f1e8"&gt;d&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-e9f01a6a"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;95% CI&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;AreaI&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;-3.35&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;721&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;.001&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;-0.25&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;[-0.40, -0.10]&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;AreaII&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;-1.15&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;721&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;.250&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;-0.09&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;[-0.23, 0.06]&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;AreaIII&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;-0.06&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;721&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;.953&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;-0.00&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a74"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;[-0.15, 0.14]&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-e9f01a7e"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;AreaIV&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a7e"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;0.44&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a7e"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;721&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a7e"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;.662&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a7e"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;0.03&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-e9f01a7e"&gt;&lt;p class="cl-e9efe874"&gt;&lt;span class="cl-e9e5f206"&gt;[-0.11, 0.18]&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;tfoot&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td  colspan="6"class="cl-e9f01a88"&gt;&lt;p class="cl-e9efe87e"&gt;&lt;span class="cl-e9e5f1e8"&gt;Note. &lt;/span&gt;&lt;span class="cl-e9e5f206"&gt;df = Grados de libertad, d = tamaño del efecto&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;&lt;/table&gt;&lt;/div&gt;&lt;/template&gt;
+&lt;div class="flextable-shadow-host" id="152953fa-0a50-433f-a815-f479e1d23426"&gt;&lt;/div&gt;
+&lt;script&gt;
+var dest = document.getElementById("152953fa-0a50-433f-a815-f479e1d23426");
+var template = document.getElementById("02f8b90c-ded8-466b-a468-2de7e3e33456");
+var fantome = dest.attachShadow({mode: 'open'});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+&lt;/script&gt;
+
+]
+
+
+
+
+
+
+---
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #8F250C
+name: yo
+
+# Regresar a [Indice de Contenidos](#contents-slide)
+---
+
+name: graficat
+
+### Gráfica de la prueba T de Student
+
+
+````markdown
+ggstatsplot::ggbetweenstats(
+  data = datos,
+  x = Sexo, # Variable de agrupación/independiente
+  y = genemotiva, # Variable dependiente
+  xlab = "Sexo (Variable de Agrupación)", # etiqueta para el eje X
+  ylab = "Generosidad Motivada", # etiqueta para el eje y
+  type = "p",#eliges el tipo de prueba "p" (for parametric), "np" (for nonparametric), "r" (for robust), "bf" (for Bayes Factor).
+  #effsize.type = "g", #el tipo de estimador de efecto además de "d" está "g", "r" y la robusta que viene por defecto si eliges la robusta.
+  conf.level = 0.99,
+  plot.type = "violin", # type of plot también se puede "box" o "violin"
+  #outlier.tagging = TRUE, # Te indica cuales son outliers
+  outlier.coef = 1.5, # coeficiente para considerarlo outlier siguiendo la Tukey's rule
+  #outlier.label = IIEF, # La etiqueta que va a tener los outliers
+  #outlier.label.args = list(color = "red"), # la etiqueta de los outlairs en rojo
+  messages = FALSE, # apagar los mensajes, ¿qué mensajes?, ni idea. 
+  ggtheme = ggplot2::theme_classic(), # cambiar el fondo de la gráfica todos los temas en https://ggplot2.tidyverse.org/reference/ggtheme.html
+  package = "yarrr", # El paquete asociado a la paleta de colores.
+  palette = "info2", # Elegir la paletta dentro del paquete 
+  title = "Gráfica de la Prueba T de Student de la dimensión Generocidad Motivada",
+  #caption = "No es necesario",
+  var.equal = TRUE # Para que nuestros datos sean evaluados con la t de student y no con welch
+)
+```
+---
+&lt;br&gt;&lt;br&gt;
+&lt;img src="figs/unnamed-chunk-24-1.png" width="100%" /&gt;
+
+---
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #8F250C
+name: yo
+
+# Regresar a [Indice de Contenidos](#contents-slide)
+---
+
+name: Whitney
+
+### U de Mann-Whitney
+
+La prueba U de Mann-Whitney también se conoce con otros nombres: Mann–Whitney–Wilcoxon, Wilcoxon rank-sum test y Wilcoxon–Mann–Whitney. Por ello está disponible en R por medio de la función **wilcox.test**.
+
+````markdown
+wilcox.test(datosnopara$AreaI ~ datosnopara$Sexo)
+```
+
+
+```
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  datosnopara$AreaI by datosnopara$Sexo
+W = 56437, p-value = 0.001586
+alternative hypothesis: true location shift is not equal to 0
+```
+
+Y como se puede observar, en el caso de nuestra variable **AreaI** esta presente una diferencia estadisticamente significativa, pues el **p-value = 0.001586** es menor a 0.05
+
+En este caso, solo podremos utilizar ese código para cada una de nuestras variables. Y si queremos obtener las medias de los grupos, los grados de libertad, las desviaciones estándar, las medianas podemos utilizar el siguiente código
+
+---
+
+### En este caso, este código se puede utilizar en todo momento solo es necesario cambiar el nombre de las variables como serian 
+
+1. El nombre de nuestra base de datos (en este caso se utilizó **datosnopara**)
+2. La variable de agrupación (En este ejemplo se utilizó **datosnopara$Sexo**)
+3. Y la variable o dimensión (En este ejemplo se utilizó la dimensión **AreaI**)
+
+````markdown
+group_by(datosnopara, datosnopara$Sexo) %&gt;%
+  summarise(
+    count = n(),
+    M = mean(AreaI),
+    SD = sd(AreaI),
+    median = median(AreaI),
+    IQR = IQR(AreaI)
+  )
+```
+
+```
+# A tibble: 2 × 6
+  `datosnopara$Sexo` count     M    SD median   IQR
+  &lt;dbl+lbl&gt;          &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1 1 [Hombre]           372  21.7  5.23     22  7.25
+2 2 [Mujer]            351  22.9  4.73     23  6   
+```
+---
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #8F250C
+name: yo
+
+# Regresar a [Indice de Contenidos](#contents-slide)
+---
+
+name: graficaWhitney
+
+### Gráfica de la prueba U Mann-Whitney
+
+````markdown
+ggstatsplot::ggbetweenstats(
+  data = datos,
+  x = Sexo, # Variable de agrupación/independiente
+  y = genemotiva, # Variable dependiente
+  xlab = "Sexo (Variable de Agrupación)", # etiqueta para el eje X
+  ylab = "Generosidad Motivada", # etiqueta para el eje y
+  type = "np",#eliges el tipo de prueba "p" (for parametric), "np" (for nonparametric), "r" (for robust), "bf" (for Bayes Factor).
+  #effsize.type = "g", #el tipo de estimador de efecto además de "d" está "g", "r" y la robusta que viene por defecto si eliges la robusta.
+  conf.level = 0.99,
+  plot.type = "violin", # type of plot también se puede "box" o "violin"
+  #outlier.tagging = TRUE, # Te indica cuales son outliers
+  outlier.coef = 1.5, # coeficiente para considerarlo outlier siguiendo la Tukey's rule
+  #outlier.label = IIEF, # La etiqueta que va a tener los outliers
+  #outlier.label.args = list(color = "red"), # la etiqueta de los outlairs en rojo
+  messages = FALSE, # apagar los mensajes, ¿qué mensajes?, ni idea. 
+  ggtheme = ggplot2::theme_classic(), # cambiar el fondo de la gráfica todos los temas en https://ggplot2.tidyverse.org/reference/ggtheme.html
+  package = "yarrr", # El paquete asociado a la paleta de colores.
+  palette = "info2", # Elegir la paletta dentro del paquete 
+  title = "Gráfica de la Prueba T de Student de la dimensión Generocidad Motivada",
+  #caption = "No es necesario",
+  var.equal = TRUE # Para que nuestros datos sean evaluados con la t de student y no con welch
+)
+```
+
+---
+
+&lt;br&gt;&lt;br&gt;
+&lt;img src="figs/unnamed-chunk-27-1.png" width="100%" /&gt;
+---
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #8F250C
+name: yo
+
+# Regresar a [Indice de Contenidos](#contents-slide)
+---
+
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #FCBF49
+name: ANOVA
+
+## Pruebas Parametricas para más de dos grupos (ANOVA)
+&lt;hr&gt;
+
+---
+
+Para iniciar con el analisis, primero debemos obtener dos cosas:
+
+1. La normalidad de los datos (Kolmogorov y Shapiro)
+2. La igualdad de varianzas (Prueba de Levene)
+
+Podemos aplicar lo ya explicado en anteriormente
+
+#### Ahora para tener nuestros analisis de ANOVA vamos a utilizar el siguiente código (Tener en cuenta que esta es una prueba paramétrica)
+
+````markdown
+aov(datospara$Participación ~ datospara$Área, data = datospara)
+```
+
+
+
+```
+Call:
+   aov(formula = datospara$Participación ~ datospara$Área, data = datospara)
+
+Terms:
+                datospara$Área Residuals
+Sum of Squares         251.813  3376.512
+Deg. of Freedom              1       189
+
+Residual standard error: 4.226718
+Estimated effects may be unbalanced
+```
+
+Los resultados estan presentes, pero podemos mejorar la presentación con el siguiente código
+
+---
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+Primero guardamos nuestro código, en este caso lo hicimos como **anvar &lt;-**
+
+````markdown
+anvar &lt;- aov(datospara$Participación ~ datospara$Área, data = datospara)
+```
+Luego vamos a utilizar **summary** el cual contiene nuestro código en el cual hemos guardado el anova realizado y le damos **control + enter**
+
+````markdown
+summary(anvar)
+```
+
+```
+                Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+datospara$Área   1    252  251.81    14.1 0.000231 ***
+Residuals      189   3377   17.87                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+Como se puede ser los resultados obtenidos con más ordenados y podemos solo copias y pegar los resultados, interpretando que son estadisticamente significativos porque el **p-value = 0.000231** es menor a 0.05. Sin embargo, podemos darte más especificidad con el siguiente código
+
+---
+
+&lt;br&gt;&lt;br&gt;
+
+````markdown
+report(anvar)
+```
+
+
+```
+The ANOVA (formula: datospara$Participación ~ datospara$Área) suggests
+that:
+
+  - The main effect of datospara$Área is statistically significant and
+medium (F(1, 189) = 14.10, p &lt; .001; Eta2 = 0.07, 95% CI [0.02, 1.00])
+
+Effect sizes were labelled following Field's (2013) recommendations.
+```
+
+Como se puede observar nos dan una descripción en ingles y solo para copias y pegar en nuestro trabajo, claro que solo pondríamos hasta el **valor p** y si es necesario los intervalos de confianza **(CI)**, pero eliminar **Eta2** pues esto es el tamaño del efecto, conservando asi lo demás para poder traducirlo y pegarlo. 
+
+Con respecto a como podemos obtener una tabla apa con nuestro anova, solo vamos a colocar el siguiente código. En este caso, para poder realizar esto solo borramos en ***#filename="tabla_anova.doc*** el **"#"** asterisco y ya se nos guardará los resultados en nuestro ordenador
+
+
+````markdown
+apa.aov.table(anvar, # Nuestra base de datos
+              table.number = 1,
+              #filename="tabla_anova.doc" # Linea para guardar nuestro archivo en word
+              )
+```
+---
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #8F250C
+name: yo
+
+# Regresar a [Indice de Contenidos](#contents-slide)
+---
+
+name: graficaanova
+
+### Gráfica de la prueba ANOVA
+
+````markdown
+ggstatsplot::ggbetweenstats(
+  data = datospara,
+  x = Área,
+  y = Participación,
+  plot.type = "violin", # type of plot también se puede "box" o "violin"
+  notch = TRUE, # box plot cuadrado o ovalado (notch)
+  mean.ci = TRUE, # Intervalos de confianza para las medias
+  type = "p", #"p" (para parametrica), "np" (no parametrica), "r" (robusta), or "bf" (bayes factor)
+  effsize.type = "partial_omega",# hay "biased" (equivalente a la d cohen del t test), "partial_eta" (eta-squared para anova) o "unbiased" (equivalente a "g" Hedge's g para t-test, "partial_omega"(omega-squared para anova)
+  k = 2, # cuántos decimales?
+  pairwise.comparisons = TRUE, # Muestra las comparaciones post hoc
+  p.adjust.method = "bonferroni", # método para utilizar las post hoc. esta: "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"
+  pairwise.display = "s", # "s" solo te muestra las que son significativas, "ns" muestra no significativas, "all" pues todas ;)
+  #outlier.tagging = TRUE, # mostrar outliers
+  outlier.coef = 1.5, # coeficiente para considerarlo outlier siguiendo la Tukey's rule
+  xlab = "Variable de Agrupación (Área de trabajo)", 
+  ylab = "Dimensión Participación",
+  title = "Gráfica de la prueba ANOVA", # Título del plot
+  ggtheme = ggthemes::theme_base(), # cambiar el fondo del gráfico
+  ggstatsplot.layer = FALSE, # turn off `ggstatsplot` theme layer
+  package = "wesanderson", # elegir el paquete asociado a la paleta de colores.
+  palette = "Darjeeling1", # cambiar la paleta
+  messages = FALSE,
+  var.equal = TRUE
+)
+```
+---
+
+&lt;br&gt;
+
+&lt;img src="figs/unnamed-chunk-32-1.png" width="100%" /&gt;
+
+---
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #8F250C
+name: yo
+
+# Regresar a [Indice de Contenidos](#contents-slide)
+---
+
+name: Kruskal
+
+### Kruskal-Wallis (Prueba no paramétrica)
+
+Es una alternativa no paramétrica cuando hay que comparar más de dos grupos, los cuales no cumplieron con los supuestos de normalidad e igualdad de varianzas.
+
+Para poder hacer ese analizamos solo necesitamos los siguiente códigos
+
+````markdown
+kruskal.test(HabilidadesSociales ~ Grupo, data = datosnoparame)
+```
+
+
+```
+
+	Kruskal-Wallis rank sum test
+
+data:  HabilidadesSociales by Grupo
+Kruskal-Wallis chi-squared = 3.1366, df = 2, p-value = 0.2084
+```
+
+Y los resultados resúmenes, en la cual solo vamos a colocar las variables las cuales estamos utilizando para hacer nuestro kruskal
+
+````markdown
+group_by(datosnoparame, Grupo) %&gt;% summarise(
+  count = n(),
+  mean = mean(HabilidadesSociales, na.rm = TRUE),
+  sd = sd(HabilidadesSociales, na.rm = TRUE),
+  median = median(HabilidadesSociales, na.rm = TRUE),
+  IQR = IQR(HabilidadesSociales, na.rm = TRUE))
+```
+
+
+```
+# A tibble: 3 × 6
+  Grupo                     count  mean    sd median   IQR
+  &lt;dbl+lbl&gt;                 &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1 1 [Sin trabajo]              38  16.7  5.62     16  5.75
+2 2 [Trabajo Independiente]    38  18.3  6.17     18 11.5 
+3 3 [Trabajo Dependiente]      39  19.1  6.28     18 11   
+```
+
+---
+
+name: graficaKruskal
+
+### Gráfica de la prueba Kruskal-Wallis
+
+````markdown
+ggstatsplot::ggbetweenstats(
+  data = datospara,
+  x = Área,
+  y = Participación,
+  plot.type = "violin", # type of plot también se puede "box" o "violin"
+  notch = TRUE, # box plot cuadrado o ovalado (notch)
+  mean.ci = TRUE, # Intervalos de confianza para las medias
+  type = "np", #"p" (para parametrica), "np" (no parametrica), "r" (robusta), or "bf" (bayes factor)
+  effsize.type = "partial_omega",# hay "biased" (equivalente a la d cohen del t test), "partial_eta" (eta-squared para anova) o "unbiased" (equivalente a "g" Hedge's g para t-test, "partial_omega"(omega-squared para anova)
+  k = 2, # cuántos decimales?
+  pairwise.comparisons = TRUE, # Muestra las comparaciones post hoc
+  p.adjust.method = "bonferroni", # método para utilizar las post hoc. esta: "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"
+  pairwise.display = "s", # "s" solo te muestra las que son significativas, "ns" muestra no significativas, "all" pues todas ;)
+  #outlier.tagging = TRUE, # mostrar outliers
+  outlier.coef = 1.5, # coeficiente para considerarlo outlier siguiendo la Tukey's rule
+  xlab = "Variable de Agrupación (Área de trabajo)", 
+  ylab = "Dimensión Participación",
+  title = "Gráfica de la prueba ANOVA", # Título del plot
+  ggtheme = ggthemes::theme_base(), # cambiar el fondo del gráfico
+  ggstatsplot.layer = FALSE, # turn off `ggstatsplot` theme layer
+  package = "wesanderson", # elegir el paquete asociado a la paleta de colores.
+  palette = "Darjeeling1", # cambiar la paleta
+  messages = FALSE,
+  var.equal = TRUE
+)
+```
+---
+
+&lt;br&gt;
+
+&lt;img src="figs/unnamed-chunk-35-1.png" width="100%" /&gt;
+---
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #8F250C
+name: yo
+
+# Regresar a [Indice de Contenidos](#contents-slide)
+---
+
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #505168
+name: relacionados
+
+## Prueba Parametrica para grupos relacionados
+&lt;hr&gt;
+
+---
+
+name: trelacionadas
+
+# T de Student para muestras relacionadas/pareadas/apareadas
+
+El procedimiento Prueba T para muestras relacionadas compara las medias de dos variables de un solo grupo, como pueden ser en un experimento, en un programa o intervención (mejor conocido como el pre o post)
+
+
+
+Aqui tenemos dos formas de poner nuestros datos 
+
+1. Forma 1: Como serian colocar en una sola variable el pre y post y en otra los reusltados de las mediciones
+
+
+```
+# A tibble: 6 × 7
+  Participante Familiar         EvaFa…¹ Perso…² EvaPe…³ Social  EvaSo…⁴
+         &lt;dbl&gt; &lt;dbl+lbl&gt;          &lt;dbl&gt; &lt;dbl+l&gt;   &lt;dbl&gt; &lt;dbl+l&gt;   &lt;dbl&gt;
+1            1 1 [Familiar_Pre]      23 1 [Per…      25 1 [Soc…      20
+2            2 1 [Familiar_Pre]      19 1 [Per…      20 1 [Soc…      24
+3            3 1 [Familiar_Pre]      18 1 [Per…      17 1 [Soc…      18
+4            4 1 [Familiar_Pre]      22 1 [Per…      20 1 [Soc…      24
+5            5 1 [Familiar_Pre]      24 1 [Per…      22 1 [Soc…      21
+6            6 1 [Familiar_Pre]      26 1 [Per…      21 1 [Soc…      18
+# … with abbreviated variable names ¹​EvaFamiliar, ²​Personal,
+#   ³​EvaPersonal, ⁴​EvaSocial
+```
+
+---
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+2. Forma 2: Y aqui separar en varias columnas el pre y post de todos los resultados obtenidos
+
+
+```
+# A tibble: 6 × 9
+  DeEstud   Núm   Cód Familia…¹ Perso…² Socia…³ Famil…⁴ Perso…⁵ Socia…⁶
+    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+1       1     1     1        23      25      20      28      36      38
+2       1     2     2        19      20      24      37      28      27
+3       1     3     3        18      17      18      25      28      30
+4       1     4     4        22      20      24      35      33      38
+5       1     5     5        24      22      21      31      31      33
+6       1     6     6        26      21      18      33      32      31
+# … with abbreviated variable names ¹​Familiar_Pre, ²​Personal_Pre,
+#   ³​Social_Pre, ⁴​Familiar_Post, ⁵​Personal_Post, ⁶​Social_Post
+```
+
+Pero en ambos casos, los resultados van a ser iguales
+
+Tiendo nuestros datos podemos, podemos iniciar con el análisis, para esto vamos a utilizar las siguientes lineas:
+
+---
+
+Como se puede ver en esta primera forma, vamos a colocar en **x** nuestra variable pre y en **y** nuestra variable post, despues de esto colocamos **paired = TRUE** para indicar que nuestra t están relacionadas. 
+
+Los resultados se ponen en orden para que solo copiemos y peguemos en nuestro trabajo
+
+````markdown
+t_test(x=muestraapareada$Familiar_Pre, y=muestraapareada$Familiar_Post, paired = TRUE) %&gt;% 
+  parameters()
+```
+
+```
+Paired t-test
+
+Parameter         |              Group | Difference |  t(29) |      p |          95% CI
+---------------------------------------------------------------------------------------
+apar$Familiar_Pre | apar$Familiar_Post |      -9.20 | -11.69 | &lt; .001 | [-10.81, -7.59]
+
+Alternative hypothesis: true mean difference is not equal to 0
+```
+
+
+---
+
+Ahora con la segunda forma, vamos a utilizar el siguiente código
+
+````markdown
+t.test(EvaFamiliar ~ Familiar, data = muestrapare, paired = TRUE)%&gt;% 
+  parameters()
+```
+
+```
+Paired t-test
+
+Parameter   |    Group | Difference |  t(29) |      p |          95% CI
+-----------------------------------------------------------------------
+EvaFamiliar | Familiar |      -9.20 | -11.69 | &lt; .001 | [-10.81, -7.59]
+
+Alternative hypothesis: true mean difference is not equal to 0
+```
+
+Como se puede observar el resultado es el mismo, solo cambia la forma de los códigos. Ahora para colocar en una tabla nuestros resultados podemos utiliza el código antes para la t de student para muestras independientes, el cual es el siguiente
+
+````markdown
+tablaapare &lt;- nice_t_test(data = muestrapare,
+            response = "EvaFamiliar",
+            group = "Familiar",
+            warning = FALSE,
+            paired = TRUE)
+```
+colocamos el nombre de la base de donde estamos sacando nuestros resultados **muestrapare**, luego la variable respuesta **EvaFamiliar**, el grupo **Familiar** y por ultimo **paired = TRUE** para determinar que son relacionadas nuestras variables
+
+---
+
+
+
+````markdown
+nice_table(tablaapare)
+```
+
+
+&lt;template id="1e239c52-381b-4401-93b5-d467f3196e22"&gt;&lt;style&gt;
+.tabwid table{
+  border-spacing:0px !important;
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  border-color: transparent;
+  caption-side: top;
+}
+.tabwid-caption-bottom table{
+  caption-side: bottom;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td, .tabwid th {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+.katex-display {
+    margin: 0 0 !important;
+}
+&lt;/style&gt;&lt;div class="tabwid"&gt;&lt;style&gt;.cl-fbc6adbc{table-layout:auto;}.cl-fba8b9b0{font-family:'Times New Roman';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-fba8b9ce{font-family:'Times New Roman';font-size:12pt;font-weight:normal;font-style:italic;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-fbb5a7a6{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 2;background-color:transparent;}.cl-fbb61010{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0.5pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-fbb61042{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}&lt;/style&gt;&lt;table data-quarto-disable-processing='true' class='cl-fbc6adbc'&gt;&lt;thead&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;th class="cl-fbb61010"&gt;&lt;p class="cl-fbb5a7a6"&gt;&lt;span class="cl-fba8b9b0"&gt;Dependent Variable&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-fbb61010"&gt;&lt;p class="cl-fbb5a7a6"&gt;&lt;span class="cl-fba8b9ce"&gt;t&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-fbb61010"&gt;&lt;p class="cl-fbb5a7a6"&gt;&lt;span class="cl-fba8b9ce"&gt;df&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-fbb61010"&gt;&lt;p class="cl-fbb5a7a6"&gt;&lt;span class="cl-fba8b9ce"&gt;p&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-fbb61010"&gt;&lt;p class="cl-fbb5a7a6"&gt;&lt;span class="cl-fba8b9ce"&gt;d&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-fbb61010"&gt;&lt;p class="cl-fbb5a7a6"&gt;&lt;span class="cl-fba8b9b0"&gt;95% CI&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-fbb61042"&gt;&lt;p class="cl-fbb5a7a6"&gt;&lt;span class="cl-fba8b9b0"&gt;EvaFamiliar&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-fbb61042"&gt;&lt;p class="cl-fbb5a7a6"&gt;&lt;span class="cl-fba8b9b0"&gt;-11.69&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-fbb61042"&gt;&lt;p class="cl-fbb5a7a6"&gt;&lt;span class="cl-fba8b9b0"&gt;29&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-fbb61042"&gt;&lt;p class="cl-fbb5a7a6"&gt;&lt;span class="cl-fba8b9b0"&gt;&amp;lt; .001&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-fbb61042"&gt;&lt;p class="cl-fbb5a7a6"&gt;&lt;span class="cl-fba8b9b0"&gt;-2.13&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-fbb61042"&gt;&lt;p class="cl-fbb5a7a6"&gt;&lt;span class="cl-fba8b9b0"&gt;[-2.78, -1.48]&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/template&gt;
+&lt;div class="flextable-shadow-host" id="ad1fb69c-56da-47c9-8f13-b8fe52d0e5f7"&gt;&lt;/div&gt;
+&lt;script&gt;
+var dest = document.getElementById("ad1fb69c-56da-47c9-8f13-b8fe52d0e5f7");
+var template = document.getElementById("1e239c52-381b-4401-93b5-d467f3196e22");
+var fantome = dest.attachShadow({mode: 'open'});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+&lt;/script&gt;
+
+En este caso, solo vamos a obtener el resultado de solo una evaluación, pero en general si nuestros datos son solo de un experimento o preexperimento, donde solo queramos medir como fue efectivo el programa o intervención es suficiente, pero si tenemos otras mediciones podemos hacer de nuevo todo el procedimiento, pero ahora con la otra variable
+
+---
+
+name: graficatapareadas
+
+### Gráfica de la prueba t para muestras apareadas
+
+````markdown
+ggstatsplot::ggwithinstats(
+  data = muestrapare, #tus datos
+  x = Familiar, #variable agrupación
+  y = EvaFamiliar, #variable depend
+  type = "p", # parametric" or "nonparametric" or "robust" or "bayes
+  pairwise.comparisons = FALSE, 
+  effsize.type = "biased", #tmb biased
+  effsize.noncentral = TRUE,
+  bf.prior = 0.707,
+  bf.message = TRUE,
+  sphericity.correction = TRUE,
+  results.subtitle = TRUE,
+  xlab = "Variable de Agrupación (Pre y Post)",
+  ylab = "Dimensión Familiar",
+  #caption = "", # No es necesario
+  title = "Gráfica de la prueba t para muestras apareadas",
+  subtitle = NULL,
+  sample.size.label = TRUE,
+  k = 2, #número de decimales
+  conf.level = 0.95,
+  nboot = 100, 
+  path.point = FALSE,#poner puntito y medias conectados
+  path.mean = TRUE,#idem
+  sort = "none",
+  sort.fun = mean,
+  axes.range.restrict = FALSE,
+  mean.label.size = 3,
+  mean.label.fontface = "bold",
+  mean.label.color = "black",
+  notch = FALSE, #suavizado de la caja
+  notchwidth = 0.5,
+  linetype = "solid", #tmb "blank", "solid", "dashed", "dotted", "dotdash", "longdash", and "twodash")
+  outlier.tagging = FALSE, #marca extremos
+  outlier.shape = 19,
+  outlier.label = NULL,
+  outlier.label.color = "black",
+  outlier.color = "black",
+  outlier.coef = 1.5,
+  mean.plotting = TRUE, #que te muestre la media
+  mean.ci = FALSE, #intervalo de confianza
+  mean.size = 5,
+  mean.color = "darkred",
+  ggtheme = ggplot2::theme_classic(),
+  ggstatsplot.layer = TRUE,
+  package = "RColorBrewer",
+  palette = "Dark2",
+  direction = 1,
+  ggplot.component = NULL,
+  return = "plot",
+  messages = TRUE,
+)
+```
+---
+
+&lt;br&gt;
+
+&lt;img src="figs/unnamed-chunk-43-1.png" width="100%" /&gt;
+
+---
+class: left, middle, inverse, center
+background-size: 70%
+background-color: #8F250C
+name: yo
+
+# Regresar a [Indice de Contenidos](#contents-slide)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

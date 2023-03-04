@@ -978,7 +978,7 @@ Para poder hacer ese analizamos solo necesitamos los siguiente códigos
 kruskal.test(HabilidadesSociales ~ Grupo, data = datosnoparame)
 ```
 
-```{r}
+```{r echo=FALSE}
 kruskal.test(HabilidadesSociales ~ Grupo, data = datosnoparame)
 ```
 
